@@ -1,6 +1,6 @@
 version: "3.9"
 services:
- api-eindproject:
+ api-ENSA:
   image: arnevg123/api-eindproject
   ports:
     - "8000:8000"
