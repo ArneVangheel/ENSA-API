@@ -1,7 +1,7 @@
 version: "3.9"
 services:
  api-ENSA:
-  image: arnevg123/api-eindproject
+  image: arnevg123/ensa-api
   ports:
     - "8000:8000"
   volumes:
