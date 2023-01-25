@@ -60,3 +60,13 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 @app.get("/users/me")
 def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
+
+@app.delete("/code/{code_id}")
+def delete_order(code_id: int, db: Session = Depends(get_db), credentials: HTTPBasicCredentials = Depends(security)):
+    #Controleer of er een code op dit id staat
+    db_code = crud.get_code(db, code_id=code_id)
+    if not db_code:
+        raise HTTPException(status_code=400, detail="There is no Code registered")
+    #Zoja, verwijder de code
+    code = crud.delete_code(db, code_id=code_id)
+    return code
