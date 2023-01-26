@@ -5,6 +5,8 @@ class CodesBase(BaseModel):
     code: str
     uses: int
 
+class CodesEdit(BaseModel):
+    uses: int
 
 class CodesCreate(CodesBase):
     pass
