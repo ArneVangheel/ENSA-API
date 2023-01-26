@@ -30,7 +30,7 @@ origins = [
     "https://localhost.tiangolo.com/",
     "http://127.0.0.1:5500/",
     "http://127.0.0.1:8080",
-    "https://api-eindproject.netlify.app",
+    "https://brievenbus.netlify.app",
 ]
 
 app.add_middleware(
