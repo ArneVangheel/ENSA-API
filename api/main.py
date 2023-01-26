@@ -67,19 +67,27 @@ def read_codes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), t
 def check_codes(code: str, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     db_code = crud.get_code_by_code(db, code=code)
     if db_code:
-        return(True)
+        return db_code
     else:
         return(False)
 
-@app.delete("/code/{code_id}")
-def delete_order(code_id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+@app.delete("/code/{code}")
+def delete_order(code: str, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     #Controleer of er een code op dit id staat
-    db_code = crud.get_code(db, code_id=code_id)
+    db_code = crud.get_code_by_code(db, code=code)
     if not db_code:
         raise HTTPException(status_code=400, detail="There is no Code registered")
     #Zoja, verwijder de code
-    code = crud.delete_code(db, code_id=code_id)
+    code = crud.delete_code(db, code=code)
     return code
+
+@app.put("/code/{code}", response_model=schemas.Codes)
+def edit_code(code: str, item: schemas.CodesEdit, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    db_code = crud.get_code_by_code(db, code=code)
+    if not db_code:
+        raise HTTPException(status_code=400, detail="There is no code registered")
+    db_item = crud.edit_code(db, item, code=code)
+    return db_item
 
 
 @app.post("/token")
