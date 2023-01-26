@@ -16,8 +16,8 @@ def create_code(db: Session, code: schemas.CodesCreate):
     db.refresh(db_item)
     return db_item
 
-def delete_code(db: Session, code_id = int):
-    db_item = db.query(models.Codes).filter(models.Codes.id == code_id).first()
+def delete_code(db: Session, code = str):
+    db_item = db.query(models.Codes).filter(models.Codes.code == code).first()
     db.delete(db_item)
     db.commit()
     return {"detail": "The code has been deleted"}
@@ -25,3 +25,11 @@ def delete_code(db: Session, code_id = int):
 
 def get_code(db: Session, code_id: int):
     return db.query(models.Codes).filter(models.Codes.id == code_id).first()
+
+
+def edit_code(db: Session, item = schemas.CodesEdit, code = str):
+    db_item = db.query(models.Codes).filter(models.Codes.code == code).first()
+    db_item.uses = item.uses
+    db.commit()
+    db.refresh(db_item)
+    return db_item
