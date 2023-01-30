@@ -19,7 +19,7 @@ class Codes(CodesBase):
         orm_mode = True
 
 class UserBase(BaseModel):
-    username: str
+    email: str
 
 
 class UserCreate(UserBase):

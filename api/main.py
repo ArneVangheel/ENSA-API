@@ -101,7 +101,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = auth.create_access_token(
-        data={"sub": user.username}
+        data={"sub": user.email}
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -112,9 +112,9 @@ def read_users_me(db: Session = Depends(get_db), token: str = Depends(oauth2_sch
 
 @app.post("/register", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_username(db, username=user.username)
+    db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
-        raise HTTPException(status_code=400, detail="Deze username bestaat al.")
+        raise HTTPException(status_code=400, detail="Dit email bestaat al.")
     if len(crud.get_users(db=db)) > 0:
         raise HTTPException(status_code=400, detail="Er is al een account geregistreerd.")
     return crud.create_user(db=db, user=user)
