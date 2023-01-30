@@ -10,7 +10,6 @@ import schemas
 import auth
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 from database import SessionLocal, engine
-
 print("We are in the main.......")
 if not os.path.exists('.\sqlitedb'):
     print("Making folder.......")
@@ -118,3 +117,28 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if len(crud.get_users(db=db)) > 0:
         raise HTTPException(status_code=400, detail="Er is al een account geregistreerd.")
     return crud.create_user(db=db, user=user)
+
+brieven_count = 0
+pakketten_count = 0
+@app.get("/counts")
+def get_brieven_pakketten():
+    global brieven_count
+    global pakketten_count
+    return {"brief": brieven_count, "pakketten": pakketten_count}
+
+@app.get("/count/pakketten")
+def get_pakketten():
+    global pakketten_count
+    return pakketten_count
+
+@app.put("/count/brief/{aantal}")
+def edit_code(aantal: int):
+    global brieven_count
+    brieven_count = aantal
+    return brieven_count
+
+@app.put("/count/pakketten/{aantal}")
+def edit_code(aantal: int):
+    global pakketten_count
+    pakketten_count = aantal
+    return pakketten_count
