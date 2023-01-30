@@ -90,16 +90,31 @@ def edit_code(code: str, item: schemas.CodesEdit, db: Session = Depends(get_db),
     return db_item
 
 
+
 @app.post("/token")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = auth.authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=401,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = auth.create_access_token(
-        data={"sub": user}
+        data={"sub": user.email}
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/users/me", response_model=schemas.User)
+def read_users_me(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    current_user = auth.get_current_user(db, token)
+    return current_user
+
+@app.post("/register", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Dit email bestaat al.")
+    if len(crud.get_users(db=db)) > 0:
+        raise HTTPException(status_code=400, detail="Er is al een account geregistreerd.")
+    return crud.create_user(db=db, user=user)
